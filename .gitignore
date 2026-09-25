@@ -39,3 +39,9 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# Local build checks and slide preparation
+.expo-export-check/
+.codex-finalizer/
+.slide-build/
+*.validation.json

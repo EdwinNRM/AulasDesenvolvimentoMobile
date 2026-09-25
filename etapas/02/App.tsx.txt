@@ -1,0 +1,31 @@
+import { useState } from 'react';
+import { StatusBar } from 'expo-status-bar';
+import { StyleSheet, Text, TextInput, View } from 'react-native';
+
+export default function App() {
+  const [titulo, setTitulo] = useState('');
+
+  return (
+    <View style={styles.tela}>
+      <StatusBar style="dark" />
+      <Text style={styles.titulo}>Minhas Tarefas</Text>
+      <Text style={styles.subtitulo}>Organize o que você precisa fazer.</Text>
+      <TextInput
+        style={styles.campo}
+        placeholder="Digite uma tarefa"
+        value={titulo}
+        onChangeText={setTitulo}
+      />
+      <Text style={styles.dica}>Você digitou: {titulo}</Text>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  tela: { flex: 1, backgroundColor: '#F7F9FC', padding: 24, paddingTop: 58 },
+  titulo: { color: '#0F172A', fontSize: 34, fontWeight: '800' },
+  subtitulo: { color: '#64748B', fontSize: 15, marginTop: 6 },
+  campo: { backgroundColor: '#FFFFFF', borderColor: '#DCE4F0',
+    borderWidth: 1, borderRadius: 14, padding: 16, fontSize: 16, marginTop: 28 },
+  dica: { color: '#64748B', marginTop: 16 },
+});

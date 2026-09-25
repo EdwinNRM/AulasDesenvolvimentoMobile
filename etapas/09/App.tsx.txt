@@ -1,0 +1,89 @@
+import { useEffect, useState } from 'react';
+import { StatusBar } from 'expo-status-bar';
+import { FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { addDoc, collection, deleteDoc, doc, onSnapshot, serverTimestamp, updateDoc } from 'firebase/firestore';
+import { db } from './src/services/firebase';
+import { TaskItem } from './src/components/TaskItem';
+import type { Tarefa } from './src/types/Tarefa';
+
+const tarefasRef = collection(db, 'tarefas');
+
+export default function App() {
+  const [titulo, setTitulo] = useState('');
+  const [tarefas, setTarefas] = useState<Tarefa[]>([]);
+
+  useEffect(() => {
+    const cancelar = onSnapshot(tarefasRef, (snapshot) => {
+      setTarefas(snapshot.docs.map((documento) => ({
+        id: documento.id,
+        titulo: documento.data().titulo as string,
+        concluida: documento.data().concluida as boolean,
+      })));
+    });
+    return cancelar;
+  }, []);
+
+  async function adicionarTarefa() {
+    if (!titulo.trim()) return;
+    await addDoc(tarefasRef, {
+      titulo: titulo.trim(),
+      concluida: false,
+      criadaEm: serverTimestamp(),
+    });
+    setTitulo('');
+  }
+
+  async function excluirTarefa(id: string) {
+    await deleteDoc(doc(db, 'tarefas', id));
+  }
+
+  async function alternarConclusao(tarefa: Tarefa) {
+    await updateDoc(doc(db, 'tarefas', tarefa.id), {
+      concluida: !tarefa.concluida,
+    });
+  }
+
+  return (
+    <View style={styles.tela}>
+      <StatusBar style="dark" />
+      <Text style={styles.titulo}>Minhas Tarefas</Text>
+      <Text style={styles.subtitulo}>Organize o que você precisa fazer.</Text>
+      <View style={styles.formulario}>
+        <TextInput style={styles.campo} placeholder="Digite uma tarefa"
+          value={titulo} onChangeText={setTitulo} />
+        <Pressable style={styles.botao} onPress={adicionarTarefa}>
+          <Text style={styles.botaoTexto}>+</Text>
+        </Pressable>
+      </View>
+      <Text style={styles.secao}>Suas tarefas ({tarefas.length})</Text>
+      <FlatList
+        data={tarefas}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <TaskItem tarefa={item}
+            onAlternar={() => alternarConclusao(item)}
+            onExcluir={() => excluirTarefa(item.id)} />
+        )}
+        ListEmptyComponent={<Text style={styles.vazio}>Nenhuma tarefa ainda.</Text>}
+      />
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  tela: { flex: 1, backgroundColor: '#F7F9FC', padding: 24, paddingTop: 58 },
+  titulo: { color: '#0F172A', fontSize: 34, fontWeight: '800' },
+  subtitulo: { color: '#64748B', fontSize: 15, marginTop: 6 },
+  formulario: { flexDirection: 'row', gap: 10, marginTop: 28 },
+  campo: { flex: 1, backgroundColor: '#FFFFFF', borderColor: '#DCE4F0',
+    borderWidth: 1, borderRadius: 14, padding: 16, fontSize: 16 },
+  botao: { width: 54, borderRadius: 14, backgroundColor: '#2563EB',
+    alignItems: 'center', justifyContent: 'center' },
+  botaoTexto: { color: '#FFFFFF', fontSize: 30 },
+  secao: { color: '#0F172A', fontSize: 18, fontWeight: '700', marginTop: 32 },
+  item: { backgroundColor: '#FFFFFF', borderRadius: 14, padding: 18, marginTop: 10,
+    flexDirection: 'row', alignItems: 'center' },
+  textoItem: { flex: 1, color: '#1E293B', fontSize: 16 },
+  excluir: { color: '#DC2626', fontWeight: '600' },
+  vazio: { color: '#64748B', marginTop: 32, textAlign: 'center' },
+});
