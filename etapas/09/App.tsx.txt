@@ -6,12 +6,15 @@ import { db } from './src/services/firebase';
 import { TaskItem } from './src/components/TaskItem';
 import type { Tarefa } from './src/types/Tarefa';
 
+// Referência reutilizada em todas as operações da coleção tarefas.
 const tarefasRef = collection(db, 'tarefas');
 
 export default function App() {
+  // Guarda o texto digitado e os documentos carregados do Firestore.
   const [titulo, setTitulo] = useState('');
   const [tarefas, setTarefas] = useState<Tarefa[]>([]);
 
+  // READ: mantém o estado sincronizado com os documentos da coleção.
   useEffect(() => {
     const cancelar = onSnapshot(tarefasRef, (snapshot) => {
       setTarefas(snapshot.docs.map((documento) => ({
@@ -20,9 +23,11 @@ export default function App() {
         concluida: documento.data().concluida as boolean,
       })));
     });
+    // Cancela a escuta quando o componente sai da tela.
     return cancelar;
   }, []);
 
+  // CREATE: adiciona uma tarefa e limpa o campo após salvar.
   async function adicionarTarefa() {
     if (!titulo.trim()) return;
     await addDoc(tarefasRef, {
@@ -33,16 +38,19 @@ export default function App() {
     setTitulo('');
   }
 
+  // DELETE: remove o documento que possui o ID recebido.
   async function excluirTarefa(id: string) {
     await deleteDoc(doc(db, 'tarefas', id));
   }
 
+  // UPDATE: inverte o valor do campo concluida no documento.
   async function alternarConclusao(tarefa: Tarefa) {
     await updateDoc(doc(db, 'tarefas', tarefa.id), {
       concluida: !tarefa.concluida,
     });
   }
 
+  // TaskItem recebe a tarefa e as funções que tratam seus eventos.
   return (
     <View style={styles.tela}>
       <StatusBar style="dark" />
@@ -70,6 +78,7 @@ export default function App() {
   );
 }
 
+// Reúne os estilos usados pelos componentes da tela.
 const styles = StyleSheet.create({
   tela: { flex: 1, backgroundColor: '#F7F9FC', padding: 24, paddingTop: 58 },
   titulo: { color: '#0F172A', fontSize: 34, fontWeight: '800' },

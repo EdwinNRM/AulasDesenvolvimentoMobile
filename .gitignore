@@ -1,7 +1,10 @@
 # Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
 
-# Ignore the AGENTS.md file
+# Instruções locais de agentes de código
 AGENTS.md
+CLAUDE.md
+.agents/
+.claude/
 
 # dependencies
 node_modules/

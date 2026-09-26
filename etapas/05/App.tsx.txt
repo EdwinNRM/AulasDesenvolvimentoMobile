@@ -5,9 +5,11 @@ import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { db } from './src/services/firebase';
 
 export default function App() {
+  // Estes estados controlam o texto digitado e o retorno exibido ao usuário.
   const [titulo, setTitulo] = useState('');
   const [mensagem, setMensagem] = useState('');
 
+  // CREATE: cria um documento na coleção tarefas e espera a gravação terminar.
   async function adicionarTarefa() {
     if (!titulo.trim()) return;
     await addDoc(collection(db, 'tarefas'), {
@@ -19,6 +21,7 @@ export default function App() {
     setTitulo('');
   }
 
+  // Monta o formulário usado para enviar a nova tarefa.
   return (
     <View style={styles.tela}>
       <StatusBar style="dark" />
@@ -36,6 +39,7 @@ export default function App() {
   );
 }
 
+// Reúne os estilos usados pelos componentes da tela.
 const styles = StyleSheet.create({
   tela: { flex: 1, backgroundColor: '#F7F9FC', padding: 24, paddingTop: 58 },
   titulo: { color: '#0F172A', fontSize: 34, fontWeight: '800' },

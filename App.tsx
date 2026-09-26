@@ -6,17 +6,21 @@ import { TaskItem } from './src/components/TaskItem';
 import { db } from './src/services/firebase';
 import type { Tarefa } from './src/types/Tarefa';
 
+// Mantém uma referência para a coleção usada em todas as operações do CRUD.
 const tarefasRef = collection(db, 'tarefas');
 
 export default function App() {
+  // Estados que controlam o formulário, a lista e os retornos visuais da tela.
   const [titulo, setTitulo] = useState('');
   const [tarefas, setTarefas] = useState<Tarefa[]>([]);
   const [carregando, setCarregando] = useState(true);
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState('');
 
+  // READ: inicia a escuta em tempo real ao abrir a tela.
   useEffect(() => {
     const cancelar = onSnapshot(tarefasRef, (snapshot) => {
+      // Converte cada documento do Firestore para o formato Tarefa do aplicativo.
       const lista = snapshot.docs.map((documento) => ({
         id: documento.id,
         titulo: documento.data().titulo as string,
@@ -29,9 +33,12 @@ export default function App() {
       setCarregando(false);
       setErro('Não foi possível carregar as tarefas. Confira a internet e as regras do Firestore.');
     });
+
+    // Encerra a escuta quando o componente sai da tela.
     return cancelar;
   }, []);
 
+  // CREATE: valida o texto e cria um documento na coleção tarefas.
   async function adicionarTarefa() {
     const texto = titulo.trim();
     if (!texto || salvando) return;
@@ -51,6 +58,7 @@ export default function App() {
     }
   }
 
+  // DELETE: localiza o documento pelo ID e o remove do Firestore.
   async function excluirTarefa(id: string) {
     setErro('');
     try {
@@ -60,6 +68,7 @@ export default function App() {
     }
   }
 
+  // UPDATE: alterna o campo concluida entre verdadeiro e falso.
   async function alternarConclusao(tarefa: Tarefa) {
     setErro('');
     try {
@@ -69,6 +78,7 @@ export default function App() {
     }
   }
 
+  // Monta a interface com formulário, mensagens e lista de tarefas.
   return (
     <View style={styles.tela}>
       <StatusBar style="dark" />
@@ -117,6 +127,7 @@ export default function App() {
   );
 }
 
+// Centraliza os estilos visuais usados pelos componentes desta tela.
 const styles = StyleSheet.create({
   tela: { flex: 1, backgroundColor: '#F7F9FC', paddingTop: 58 },
   conteudo: { flex: 1, paddingHorizontal: 24 },

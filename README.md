@@ -1,14 +1,14 @@
 # Aula 2: ListaTarefas
 
-Projeto prático em React Native, Expo SDK 58, TypeScript e Cloud Firestore. Siga as etapas em ordem. Em cada etapa, substitua o conteúdo do arquivo indicado pelo código completo do bloco. O projeto na raiz já contém a versão final executável; as cópias de cada etapa estão em `etapas/`.
+Projeto prático em React Native, Expo SDK 57, TypeScript e Cloud Firestore. Siga as etapas em ordem. Em cada etapa, substitua o conteúdo do arquivo indicado pelo código completo do bloco. O projeto na raiz já contém a versão final executável; as cópias de cada etapa estão em `etapas/`.
 
-**Versão usada nesta aula:** em 25/09/2026, o SDK 58 ainda é uma prévia (`58.0.0-preview.7`). A versão das lojas do Expo Go ainda não abre projetos SDK 58. Para testar em Android, instale o Expo Go compatível com o SDK 58; no iPhone físico, essa prévia exige distribuição com `eas go` via TestFlight. Consulte [as notas oficiais do SDK 58](https://expo.dev/changelog/sdk-58-beta).
+**Versão usada nesta aula:** Expo SDK 57 estável, com React Native 0.86 e React 19.2.3.
 
 ## Preparação no Windows
 
 1. Baixe e instale o **Node.js LTS** em https://nodejs.org/en/download. Reinicie o terminal após a instalação. O npm vem junto.
 2. Instale o **Visual Studio Code** em https://code.visualstudio.com/download.
-3. Em um celular **Android**, instale o [Expo Go para SDK 58](https://github.com/expo/expo-go-releases/releases/download/Expo-Go-58.0.0/Expo-Go-58.0.0.apk). Você também pode obter o link atualizado no terminal com `npx expo-go url android 58`. A versão da Google Play ainda é do SDK 57. Para esta aula com QR code, use Android com a versão compatível.
+3. Instale o **Expo Go** no celular pela loja de aplicativos (https://expo.dev/go). No iPhone, entre na mesma conta Expo usada pelo terminal.
 4. Abra o terminal do VS Code e confira:
 
 ```powershell
@@ -19,13 +19,12 @@ npm --version
 5. Em uma pasta para os projetos, crie o aplicativo com o template TypeScript simples:
 
 ```powershell
-npx create-expo-app@latest ListaTarefas --template blank-typescript
+npx create-expo-app@latest ListaTarefas --template blank-typescript@57
 cd ListaTarefas
-npx expo install expo@next --fix
 code .
 ```
 
-6. Pare qualquer servidor Expo antigo com `Ctrl+C` e execute `npx expo start --clear`. O computador e o celular devem estar na mesma rede Wi-Fi. No Android, abra o Expo Go do SDK 58 e leia o QR code. Se aparecer **Failed to download remote update**, confirme primeiro a versão do Expo Go. Depois, abra no navegador do **celular** o endereço `http://IP_DO_COMPUTADOR:8081` exibido pelo Expo; se ele não carregar, experimente `npx expo start --tunnel`. A versão da loja no iPhone físico não é compatível com esta prévia.
+6. Pare qualquer servidor Expo antigo com `Ctrl+C` e execute `npx expo start --clear`. O computador e o celular devem estar na mesma rede Wi-Fi. No Android, abra o Expo Go e leia o QR code. No iPhone, use a câmera do sistema. Se aparecer **Failed to download remote update**, atualize o Expo Go e reinicie o servidor com `npx expo start --clear`. Depois, abra no navegador do **celular** o endereço `http://IP_DO_COMPUTADOR:8081` exibido pelo Expo; se ele não carregar, experimente `npx expo start --tunnel`.
 
 ## Firebase em poucos passos
 
@@ -56,6 +55,7 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 
 export default function App() {
+  // Retorna os componentes que formam a primeira tela.
   return (
     <View style={styles.tela}>
       <StatusBar style="dark" />
@@ -65,6 +65,7 @@ export default function App() {
   );
 }
 
+// Reúne os estilos usados pelos componentes da tela.
 const styles = StyleSheet.create({
   tela: { flex: 1, backgroundColor: '#F7F9FC', padding: 24, paddingTop: 58 },
   titulo: { color: '#0F172A', fontSize: 34, fontWeight: '800' },
@@ -88,8 +89,10 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 
 export default function App() {
+  // Guarda o texto atual do campo e redesenha a tela quando ele muda.
   const [titulo, setTitulo] = useState('');
 
+  // value exibe o estado; onChangeText atualiza esse estado.
   return (
     <View style={styles.tela}>
       <StatusBar style="dark" />
@@ -106,6 +109,7 @@ export default function App() {
   );
 }
 
+// Reúne os estilos usados pelos componentes da tela.
 const styles = StyleSheet.create({
   tela: { flex: 1, backgroundColor: '#F7F9FC', padding: 24, paddingTop: 58 },
   titulo: { color: '#0F172A', fontSize: 34, fontWeight: '800' },
@@ -132,15 +136,18 @@ import { StatusBar } from 'expo-status-bar';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 export default function App() {
+  // Estes estados guardam o texto do campo e a mensagem mostrada na tela.
   const [titulo, setTitulo] = useState('');
   const [mensagem, setMensagem] = useState('');
 
+  // Trata o evento do botão, valida o texto e limpa o campo.
   function adicionarTarefa() {
     if (!titulo.trim()) return;
     setMensagem('Botão pressionado: ' + titulo.trim());
     setTitulo('');
   }
 
+  // Pressable executa adicionarTarefa quando o usuário toca no botão.
   return (
     <View style={styles.tela}>
       <StatusBar style="dark" />
@@ -158,6 +165,7 @@ export default function App() {
   );
 }
 
+// Reúne os estilos usados pelos componentes da tela.
 const styles = StyleSheet.create({
   tela: { flex: 1, backgroundColor: '#F7F9FC', padding: 24, paddingTop: 58 },
   titulo: { color: '#0F172A', fontSize: 34, fontWeight: '800' },
@@ -186,6 +194,7 @@ const styles = StyleSheet.create({
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 
+// Identifica no Firebase qual projeto será usado pelo aplicativo.
 const firebaseConfig = {
   apiKey: 'AIzaSyBJvYOFOppmjgziU7bFGi92BW3DoihGRsU',
   authDomain: 'aulamobile-1ed38.firebaseapp.com',
@@ -195,6 +204,7 @@ const firebaseConfig = {
   appId: '1:19702875368:web:765201fdf67353b18d355d',
 };
 
+// Inicializa o Firebase e exporta a conexão com o Firestore.
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 ```
@@ -217,9 +227,11 @@ import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { db } from './src/services/firebase';
 
 export default function App() {
+  // Estes estados controlam o texto digitado e o retorno exibido ao usuário.
   const [titulo, setTitulo] = useState('');
   const [mensagem, setMensagem] = useState('');
 
+  // CREATE: cria um documento na coleção tarefas e espera a gravação terminar.
   async function adicionarTarefa() {
     if (!titulo.trim()) return;
     await addDoc(collection(db, 'tarefas'), {
@@ -231,6 +243,7 @@ export default function App() {
     setTitulo('');
   }
 
+  // Monta o formulário usado para enviar a nova tarefa.
   return (
     <View style={styles.tela}>
       <StatusBar style="dark" />
@@ -248,6 +261,7 @@ export default function App() {
   );
 }
 
+// Reúne os estilos usados pelos componentes da tela.
 const styles = StyleSheet.create({
   tela: { flex: 1, backgroundColor: '#F7F9FC', padding: 24, paddingTop: 58 },
   titulo: { color: '#0F172A', fontSize: 34, fontWeight: '800' },
@@ -273,6 +287,7 @@ const styles = StyleSheet.create({
 **Arquivo: `src/types/Tarefa.ts`**
 
 ```ts
+// Define o formato de uma tarefa dentro do aplicativo.
 export type Tarefa = {
   id: string;
   titulo: string;
@@ -290,12 +305,15 @@ import { addDoc, collection, onSnapshot, serverTimestamp } from 'firebase/firest
 import { db } from './src/services/firebase';
 import type { Tarefa } from './src/types/Tarefa';
 
+// Referência reutilizada para ler e gravar na coleção tarefas.
 const tarefasRef = collection(db, 'tarefas');
 
 export default function App() {
+  // Guarda o texto digitado e os documentos carregados do Firestore.
   const [titulo, setTitulo] = useState('');
   const [tarefas, setTarefas] = useState<Tarefa[]>([]);
 
+  // READ: inicia a escuta da coleção quando a tela é aberta.
   useEffect(() => {
     const cancelar = onSnapshot(tarefasRef, (snapshot) => {
       setTarefas(snapshot.docs.map((documento) => ({
@@ -304,9 +322,11 @@ export default function App() {
         concluida: documento.data().concluida as boolean,
       })));
     });
+    // Cancela a escuta quando o componente sai da tela.
     return cancelar;
   }, []);
 
+  // CREATE: adiciona uma tarefa e limpa o campo após salvar.
   async function adicionarTarefa() {
     if (!titulo.trim()) return;
     await addDoc(tarefasRef, {
@@ -317,6 +337,7 @@ export default function App() {
     setTitulo('');
   }
 
+  // Mostra o formulário e a quantidade de tarefas carregadas.
   return (
     <View style={styles.tela}>
       <StatusBar style="dark" />
@@ -334,6 +355,7 @@ export default function App() {
   );
 }
 
+// Reúne os estilos usados pelos componentes da tela.
 const styles = StyleSheet.create({
   tela: { flex: 1, backgroundColor: '#F7F9FC', padding: 24, paddingTop: 58 },
   titulo: { color: '#0F172A', fontSize: 34, fontWeight: '800' },
@@ -366,12 +388,15 @@ import { addDoc, collection, onSnapshot, serverTimestamp } from 'firebase/firest
 import { db } from './src/services/firebase';
 import type { Tarefa } from './src/types/Tarefa';
 
+// Referência reutilizada para ler e gravar na coleção tarefas.
 const tarefasRef = collection(db, 'tarefas');
 
 export default function App() {
+  // Guarda o texto digitado e os documentos carregados do Firestore.
   const [titulo, setTitulo] = useState('');
   const [tarefas, setTarefas] = useState<Tarefa[]>([]);
 
+  // READ: mantém o estado sincronizado com os documentos da coleção.
   useEffect(() => {
     const cancelar = onSnapshot(tarefasRef, (snapshot) => {
       setTarefas(snapshot.docs.map((documento) => ({
@@ -380,9 +405,11 @@ export default function App() {
         concluida: documento.data().concluida as boolean,
       })));
     });
+    // Cancela a escuta quando o componente sai da tela.
     return cancelar;
   }, []);
 
+  // CREATE: adiciona uma tarefa e limpa o campo após salvar.
   async function adicionarTarefa() {
     if (!titulo.trim()) return;
     await addDoc(tarefasRef, {
@@ -393,6 +420,7 @@ export default function App() {
     setTitulo('');
   }
 
+  // FlatList transforma o array tarefas em itens visuais.
   return (
     <View style={styles.tela}>
       <StatusBar style="dark" />
@@ -420,6 +448,7 @@ export default function App() {
   );
 }
 
+// Reúne os estilos usados pelos componentes da tela.
 const styles = StyleSheet.create({
   tela: { flex: 1, backgroundColor: '#F7F9FC', padding: 24, paddingTop: 58 },
   titulo: { color: '#0F172A', fontSize: 34, fontWeight: '800' },
@@ -455,12 +484,15 @@ import { addDoc, collection, deleteDoc, doc, onSnapshot, serverTimestamp } from 
 import { db } from './src/services/firebase';
 import type { Tarefa } from './src/types/Tarefa';
 
+// Referência reutilizada em todas as operações da coleção tarefas.
 const tarefasRef = collection(db, 'tarefas');
 
 export default function App() {
+  // Guarda o texto digitado e os documentos carregados do Firestore.
   const [titulo, setTitulo] = useState('');
   const [tarefas, setTarefas] = useState<Tarefa[]>([]);
 
+  // READ: mantém o estado sincronizado com os documentos da coleção.
   useEffect(() => {
     const cancelar = onSnapshot(tarefasRef, (snapshot) => {
       setTarefas(snapshot.docs.map((documento) => ({
@@ -469,9 +501,11 @@ export default function App() {
         concluida: documento.data().concluida as boolean,
       })));
     });
+    // Cancela a escuta quando o componente sai da tela.
     return cancelar;
   }, []);
 
+  // CREATE: adiciona uma tarefa e limpa o campo após salvar.
   async function adicionarTarefa() {
     if (!titulo.trim()) return;
     await addDoc(tarefasRef, {
@@ -482,10 +516,12 @@ export default function App() {
     setTitulo('');
   }
 
+  // DELETE: remove o documento que possui o ID recebido.
   async function excluirTarefa(id: string) {
     await deleteDoc(doc(db, 'tarefas', id));
   }
 
+  // FlatList mostra as tarefas e oferece a ação de exclusão.
   return (
     <View style={styles.tela}>
       <StatusBar style="dark" />
@@ -516,6 +552,7 @@ export default function App() {
   );
 }
 
+// Reúne os estilos usados pelos componentes da tela.
 const styles = StyleSheet.create({
   tela: { flex: 1, backgroundColor: '#F7F9FC', padding: 24, paddingTop: 58 },
   titulo: { color: '#0F172A', fontSize: 34, fontWeight: '800' },
@@ -549,12 +586,14 @@ const styles = StyleSheet.create({
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import type { Tarefa } from '../types/Tarefa';
 
+// Define os dados e eventos que o componente recebe do App.
 type Props = {
   tarefa: Tarefa;
   onAlternar: () => void;
   onExcluir: () => void;
 };
 
+// Exibe uma tarefa e chama as funções recebidas quando o usuário interage.
 export function TaskItem({ tarefa, onAlternar, onExcluir }: Props) {
   return (
     <View style={styles.item}>
@@ -575,6 +614,7 @@ export function TaskItem({ tarefa, onAlternar, onExcluir }: Props) {
   );
 }
 
+// Define a aparência do cartão, do marcador e do botão de exclusão.
 const styles = StyleSheet.create({
   item: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFFFFF',
     borderRadius: 14, paddingHorizontal: 16, paddingVertical: 16, marginBottom: 10,
@@ -600,12 +640,15 @@ import { db } from './src/services/firebase';
 import { TaskItem } from './src/components/TaskItem';
 import type { Tarefa } from './src/types/Tarefa';
 
+// Referência reutilizada em todas as operações da coleção tarefas.
 const tarefasRef = collection(db, 'tarefas');
 
 export default function App() {
+  // Guarda o texto digitado e os documentos carregados do Firestore.
   const [titulo, setTitulo] = useState('');
   const [tarefas, setTarefas] = useState<Tarefa[]>([]);
 
+  // READ: mantém o estado sincronizado com os documentos da coleção.
   useEffect(() => {
     const cancelar = onSnapshot(tarefasRef, (snapshot) => {
       setTarefas(snapshot.docs.map((documento) => ({
@@ -614,9 +657,11 @@ export default function App() {
         concluida: documento.data().concluida as boolean,
       })));
     });
+    // Cancela a escuta quando o componente sai da tela.
     return cancelar;
   }, []);
 
+  // CREATE: adiciona uma tarefa e limpa o campo após salvar.
   async function adicionarTarefa() {
     if (!titulo.trim()) return;
     await addDoc(tarefasRef, {
@@ -627,16 +672,19 @@ export default function App() {
     setTitulo('');
   }
 
+  // DELETE: remove o documento que possui o ID recebido.
   async function excluirTarefa(id: string) {
     await deleteDoc(doc(db, 'tarefas', id));
   }
 
+  // UPDATE: inverte o valor do campo concluida no documento.
   async function alternarConclusao(tarefa: Tarefa) {
     await updateDoc(doc(db, 'tarefas', tarefa.id), {
       concluida: !tarefa.concluida,
     });
   }
 
+  // TaskItem recebe a tarefa e as funções que tratam seus eventos.
   return (
     <View style={styles.tela}>
       <StatusBar style="dark" />
@@ -664,6 +712,7 @@ export default function App() {
   );
 }
 
+// Reúne os estilos usados pelos componentes da tela.
 const styles = StyleSheet.create({
   tela: { flex: 1, backgroundColor: '#F7F9FC', padding: 24, paddingTop: 58 },
   titulo: { color: '#0F172A', fontSize: 34, fontWeight: '800' },
@@ -702,17 +751,21 @@ import { TaskItem } from './src/components/TaskItem';
 import { db } from './src/services/firebase';
 import type { Tarefa } from './src/types/Tarefa';
 
+// Mantém uma referência para a coleção usada em todas as operações do CRUD.
 const tarefasRef = collection(db, 'tarefas');
 
 export default function App() {
+  // Estados que controlam o formulário, a lista e os retornos visuais da tela.
   const [titulo, setTitulo] = useState('');
   const [tarefas, setTarefas] = useState<Tarefa[]>([]);
   const [carregando, setCarregando] = useState(true);
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState('');
 
+  // READ: inicia a escuta em tempo real ao abrir a tela.
   useEffect(() => {
     const cancelar = onSnapshot(tarefasRef, (snapshot) => {
+      // Converte cada documento do Firestore para o formato Tarefa do aplicativo.
       const lista = snapshot.docs.map((documento) => ({
         id: documento.id,
         titulo: documento.data().titulo as string,
@@ -725,9 +778,11 @@ export default function App() {
       setCarregando(false);
       setErro('Não foi possível carregar as tarefas. Confira a internet e as regras do Firestore.');
     });
+    // Encerra a escuta quando o componente sai da tela.
     return cancelar;
   }, []);
 
+  // CREATE: valida o texto e cria um documento na coleção tarefas.
   async function adicionarTarefa() {
     const texto = titulo.trim();
     if (!texto || salvando) return;
@@ -747,6 +802,7 @@ export default function App() {
     }
   }
 
+  // DELETE: localiza o documento pelo ID e o remove do Firestore.
   async function excluirTarefa(id: string) {
     setErro('');
     try {
@@ -756,6 +812,7 @@ export default function App() {
     }
   }
 
+  // UPDATE: alterna o campo concluida entre verdadeiro e falso.
   async function alternarConclusao(tarefa: Tarefa) {
     setErro('');
     try {
@@ -765,6 +822,7 @@ export default function App() {
     }
   }
 
+  // Monta a interface com formulário, mensagens e lista de tarefas.
   return (
     <View style={styles.tela}>
       <StatusBar style="dark" />
@@ -813,6 +871,7 @@ export default function App() {
   );
 }
 
+// Centraliza os estilos visuais usados pelos componentes desta tela.
 const styles = StyleSheet.create({
   tela: { flex: 1, backgroundColor: '#F7F9FC', paddingTop: 58 },
   conteudo: { flex: 1, paddingHorizontal: 24 },
@@ -857,7 +916,7 @@ ListaTarefas/
     └── types/Tarefa.ts
 ```
 
-O Expo criou `index.ts`, `tsconfig.json` e `assets/`; eles não precisam ser alterados. O upgrade para SDK 58 acrescentou o plugin `expo-status-bar` a `app.json`. `eslint.config.js` foi criado pela checagem `npx expo lint`. `package-lock.json` é gerado pelo npm. O guia e as cópias em `etapas/` são material de apoio e não fazem parte do aplicativo em execução.
+O Expo criou `index.ts`, `tsconfig.json` e `assets/`; eles não precisam ser alterados. `eslint.config.js` foi criado pela checagem `npx expo lint`. `package-lock.json` é gerado pelo npm. O guia e as cópias em `etapas/` são material de apoio e não fazem parte do aplicativo em execução.
 
 ### Código final completo
 
@@ -872,17 +931,21 @@ import { TaskItem } from './src/components/TaskItem';
 import { db } from './src/services/firebase';
 import type { Tarefa } from './src/types/Tarefa';
 
+// Mantém uma referência para a coleção usada em todas as operações do CRUD.
 const tarefasRef = collection(db, 'tarefas');
 
 export default function App() {
+  // Estados que controlam o formulário, a lista e os retornos visuais da tela.
   const [titulo, setTitulo] = useState('');
   const [tarefas, setTarefas] = useState<Tarefa[]>([]);
   const [carregando, setCarregando] = useState(true);
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState('');
 
+  // READ: inicia a escuta em tempo real ao abrir a tela.
   useEffect(() => {
     const cancelar = onSnapshot(tarefasRef, (snapshot) => {
+      // Converte cada documento do Firestore para o formato Tarefa do aplicativo.
       const lista = snapshot.docs.map((documento) => ({
         id: documento.id,
         titulo: documento.data().titulo as string,
@@ -895,9 +958,12 @@ export default function App() {
       setCarregando(false);
       setErro('Não foi possível carregar as tarefas. Confira a internet e as regras do Firestore.');
     });
+
+    // Encerra a escuta quando o componente sai da tela.
     return cancelar;
   }, []);
 
+  // CREATE: valida o texto e cria um documento na coleção tarefas.
   async function adicionarTarefa() {
     const texto = titulo.trim();
     if (!texto || salvando) return;
@@ -917,6 +983,7 @@ export default function App() {
     }
   }
 
+  // DELETE: localiza o documento pelo ID e o remove do Firestore.
   async function excluirTarefa(id: string) {
     setErro('');
     try {
@@ -926,6 +993,7 @@ export default function App() {
     }
   }
 
+  // UPDATE: alterna o campo concluida entre verdadeiro e falso.
   async function alternarConclusao(tarefa: Tarefa) {
     setErro('');
     try {
@@ -935,6 +1003,7 @@ export default function App() {
     }
   }
 
+  // Monta a interface com formulário, mensagens e lista de tarefas.
   return (
     <View style={styles.tela}>
       <StatusBar style="dark" />
@@ -983,6 +1052,7 @@ export default function App() {
   );
 }
 
+// Centraliza os estilos visuais usados pelos componentes desta tela.
 const styles = StyleSheet.create({
   tela: { flex: 1, backgroundColor: '#F7F9FC', paddingTop: 58 },
   conteudo: { flex: 1, paddingHorizontal: 24 },
@@ -1014,12 +1084,14 @@ const styles = StyleSheet.create({
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import type { Tarefa } from '../types/Tarefa';
 
+// Props são os dados e eventos recebidos do componente App.
 type Props = {
   tarefa: Tarefa;
   onAlternar: () => void;
   onExcluir: () => void;
 };
 
+// Exibe uma tarefa e delega as ações de concluir e excluir ao componente pai.
 export function TaskItem({ tarefa, onAlternar, onExcluir }: Props) {
   return (
     <View style={styles.item}>
@@ -1040,6 +1112,7 @@ export function TaskItem({ tarefa, onAlternar, onExcluir }: Props) {
   );
 }
 
+// Define a aparência do cartão, do marcador e do botão de exclusão.
 const styles = StyleSheet.create({
   item: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFFFFF',
     borderRadius: 14, paddingHorizontal: 16, paddingVertical: 16, marginBottom: 10,
@@ -1060,6 +1133,7 @@ const styles = StyleSheet.create({
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 
+// Identifica no Firebase qual projeto será usado pelo aplicativo.
 const firebaseConfig = {
   apiKey: 'AIzaSyBJvYOFOppmjgziU7bFGi92BW3DoihGRsU',
   authDomain: 'aulamobile-1ed38.firebaseapp.com',
@@ -1069,6 +1143,7 @@ const firebaseConfig = {
   appId: '1:19702875368:web:765201fdf67353b18d355d',
 };
 
+// Inicializa o Firebase uma única vez e exporta a conexão com o Firestore.
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 ```
@@ -1076,6 +1151,7 @@ export const db = getFirestore(app);
 **Arquivo: `src/types/Tarefa.ts`**
 
 ```ts
+// Define os campos que toda tarefa precisa ter dentro do aplicativo.
 export type Tarefa = {
   id: string;
   titulo: string;
@@ -1091,19 +1167,19 @@ export type Tarefa = {
   "version": "1.0.0",
   "main": "index.ts",
   "dependencies": {
-    "expo": "^58.0.0-preview.7",
-    "expo-status-bar": "~58.0.1",
+    "expo": "^57.0.25",
+    "expo-status-bar": "~57.0.1",
     "firebase": "^12.19.0",
-    "react": "19.3.0",
-    "react-dom": "19.3.0",
-    "react-native": "0.88.0-rc.1",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-native": "0.86.3",
     "react-native-web": "^0.21.2"
   },
   "devDependencies": {
     "@expo/ngrok": "^4.1.3",
-    "@types/react": "~19.3.0",
+    "@types/react": "~19.2.4",
     "eslint": "^9.0.0",
-    "eslint-config-expo": "~58.0.2",
+    "eslint-config-expo": "~57.0.2",
     "typescript": "~6.0.3"
   },
   "scripts": {
@@ -1142,10 +1218,7 @@ export type Tarefa = {
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    },
-    "plugins": [
-      "expo-status-bar"
-    ]
+    }
   }
 }
 ```
@@ -1154,6 +1227,12 @@ export type Tarefa = {
 
 ```gitignore
 # Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
+
+# Instruções locais de agentes de código
+AGENTS.md
+CLAUDE.md
+.agents/
+.claude/
 
 # dependencies
 node_modules/
@@ -1220,19 +1299,18 @@ module.exports = defineConfig([
 ## Comandos para instalar e executar
 
 ```powershell
-npx create-expo-app@latest ListaTarefas --template blank-typescript
+npx create-expo-app@latest ListaTarefas --template blank-typescript@57
 cd ListaTarefas
-npx expo install expo@next --fix
 npx expo install firebase
 code .
 npx expo start
 ```
 
-Se usar a pasta deste material já pronta, execute apenas `cd ListaTarefas`, `npm install` e `npx expo start`. Para Android, use o Expo Go compatível com SDK 58.
+Se usar a pasta deste material já pronta, execute apenas `cd ListaTarefas`, `npm install` e `npx expo start`.
 
 ## Checklist no celular e no Firebase Console
 
-- [ ] A tela “Minhas Tarefas” abre no Expo Go compatível com SDK 58.
+- [ ] A tela “Minhas Tarefas” abre no Expo Go.
 - [ ] Digitar no campo altera o texto.
 - [ ] Tocar em + cria um documento na coleção `tarefas`.
 - [ ] O documento tem `titulo`, `concluida: false` e `criadaEm`.
@@ -1257,7 +1335,7 @@ Em `src/components/TaskItem.tsx`, faça o título de uma tarefa concluída apare
 
 ## Documentação consultada
 
-- Expo: https://docs.expo.dev/more/create-expo/, https://docs.expo.dev/versions/v58.0.0/ e https://expo.dev/changelog/sdk-58-beta
+- Expo: https://docs.expo.dev/more/create-expo/, https://docs.expo.dev/versions/v57.0.0/
 - Expo com Firebase: https://docs.expo.dev/guides/using-firebase/
 - Firestore: https://firebase.google.com/docs/firestore/quickstart
 - Leitura em tempo real: https://firebase.google.com/docs/firestore/query-data/listen

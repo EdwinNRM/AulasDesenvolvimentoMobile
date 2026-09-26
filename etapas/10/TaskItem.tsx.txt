@@ -1,12 +1,14 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import type { Tarefa } from '../types/Tarefa';
 
+// Props são os dados e eventos recebidos do componente App.
 type Props = {
   tarefa: Tarefa;
   onAlternar: () => void;
   onExcluir: () => void;
 };
 
+// Exibe uma tarefa e delega as ações de concluir e excluir ao componente pai.
 export function TaskItem({ tarefa, onAlternar, onExcluir }: Props) {
   return (
     <View style={styles.item}>
@@ -27,6 +29,7 @@ export function TaskItem({ tarefa, onAlternar, onExcluir }: Props) {
   );
 }
 
+// Define a aparência do cartão, do marcador e do botão de exclusão.
 const styles = StyleSheet.create({
   item: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFFFFF',
     borderRadius: 14, paddingHorizontal: 16, paddingVertical: 16, marginBottom: 10,

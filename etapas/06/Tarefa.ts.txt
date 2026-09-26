@@ -1,3 +1,4 @@
+// Define o formato de uma tarefa dentro do aplicativo.
 export type Tarefa = {
   id: string;
   titulo: string;

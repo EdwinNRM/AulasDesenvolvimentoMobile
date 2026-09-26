@@ -3,15 +3,18 @@ import { StatusBar } from 'expo-status-bar';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 export default function App() {
+  // Estes estados guardam o texto do campo e a mensagem mostrada na tela.
   const [titulo, setTitulo] = useState('');
   const [mensagem, setMensagem] = useState('');
 
+  // Trata o evento do botão, valida o texto e limpa o campo.
   function adicionarTarefa() {
     if (!titulo.trim()) return;
     setMensagem('Botão pressionado: ' + titulo.trim());
     setTitulo('');
   }
 
+  // Monta a interface que será conectada ao Firebase nas próximas etapas.
   return (
     <View style={styles.tela}>
       <StatusBar style="dark" />
@@ -29,6 +32,7 @@ export default function App() {
   );
 }
 
+// Reúne os estilos usados pelos componentes da tela.
 const styles = StyleSheet.create({
   tela: { flex: 1, backgroundColor: '#F7F9FC', padding: 24, paddingTop: 58 },
   titulo: { color: '#0F172A', fontSize: 34, fontWeight: '800' },

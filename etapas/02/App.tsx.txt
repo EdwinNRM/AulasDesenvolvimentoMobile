@@ -3,8 +3,10 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 
 export default function App() {
+  // Guarda o texto atual do campo e redesenha a tela quando ele muda.
   const [titulo, setTitulo] = useState('');
 
+  // value exibe o estado; onChangeText atualiza esse estado.
   return (
     <View style={styles.tela}>
       <StatusBar style="dark" />
@@ -21,6 +23,7 @@ export default function App() {
   );
 }
 
+// Reúne os estilos usados pelos componentes da tela.
 const styles = StyleSheet.create({
   tela: { flex: 1, backgroundColor: '#F7F9FC', padding: 24, paddingTop: 58 },
   titulo: { color: '#0F172A', fontSize: 34, fontWeight: '800' },
